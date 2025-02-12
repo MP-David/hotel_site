@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Hotel Exemplo</title>
+</head>
+<body>
+    <header>
+        <h1>Bem-vindo ao Hotel Exemplo</h1>
+        <nav>
+            <a href="#localizacao">Localização</a>
+            <a href="#reservas">Reservas</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#quartos">Tipos de Quartos</a>
+            <a href="admin.html">Área Administrativa</a> <!-- Link para a área administrativa -->
+        </nav>
+    </header>
+
+    <section id="quartos">
+        <h2>Tipos de Quartos</h2>
+        <ul class="room-list">
+            <li class="room-item">
+                <h3>Quarto Standard</h3>
+                <div class="carousel">
+                    <div class="carousel-images">
+                        <img src="https://images.pexels.com/photos/271619/pexels-photo-271619.jpeg?auto=compress&cs=tinysrgb&w=1200"alt="Quarto Standard - Imagem 1">
+                        <img src="https://images.pexels.com/photos/1743229/pexels-photo-1743229.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Quarto Standard - Imagem 2">
+                        <img src="https://images.pexels.com/photos/2029719/pexels-photo-2029719.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Quarto Standard - Imagem 3">
+                    </div>
+                    <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+                    <button class="next" onclick="moveSlide(1)">&#10095;</button>
+                </div>
+                <p>Valores a partir de R$150.</p>
+            </li>
+            <li class="room-item">
+                <h3>Quarto Luxo</h3>
+                <div class="carousel">
+                    <div class="carousel-images">
+                        <img src="https://via.placeholder.com/300x200.png?text=Quarto+Luxo+1" alt="Quarto Luxo - Imagem 1">
+                        <img src="https://via.placeholder.com/300x200.png?text=Quarto+Luxo+2" alt="Quarto Luxo - Imagem 2">
+                        <img src="https://via.placeholder.com/300x200.png?text=Quarto+Luxo+3" alt="Quarto Luxo - Imagem 3">
+                    </div>
+                    <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+                    <button class="next" onclick="moveSlide(1)">&#10095;</button>
+                </div>
+                <p>Descrição do quarto luxo.</p>
+            </li>
+            <li class="room-item">
+                <h3>Quarto Familiar</h3>
+                <div class="carousel">
+                    <div class="carousel-images">
+                        <img src="https://via.placeholder.com/300x200.png?text=Quarto+Familiar+1" alt="Quarto Familiar - Imagem 1">
+                        <img src="https://via.placeholder.com/300x200.png?text=Quarto+Familiar+2" alt="Quarto Familiar - Imagem 2">
+                        <img src="https://via.placeholder.com/300x200.png?text=Quarto+Familiar+3" alt="Quarto Familiar - Imagem 3">
+                    </div>
+                    <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+                    <button class="next" onclick="moveSlide(1)">&#10095;</button>
+                </div>
+                <p>Descrição do quarto familiar.</p>
+            </li>
+        </ul>
+    </section>
+
+    <section id="servicos">
+        <h2>Serviços</h2>
+        <ul>
+            <li>Lavanderia</li>
+            <li>Academia</li>
+            <li>Wi-Fi Grátis</li>
+            <li>Serviço de Quarto</li>
+        </ul>
+    </section>
+
+    <section id="reservas">
+        <h2>Faça sua Reserva</h2>
+        <div class="reservation-container">
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label for="checkin">Data de Entrada:</label>
+                    <input type="date" id="checkin" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkout">Data de Saída:</label>
+                    <input type="date" id="checkout" required>
+                </div>
+                <button type="submit" id="bntReservar">Reservar</button>
+            </form>
+        </div>
+        <div id="reservationMessage"></div>
+    </section>
+
+
+    <section id="localizacao">
+        <h2>Localização</h2>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509123!2d144.9537353153163!3d-37.81627997975157!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad642af0f11f3b3%3A0x5045675218ceed30!2sHotel%20Exemplo!5e0!3m2!1spt-BR!2sbr!4v1633031234567!5m2!1spt-BR!2sbr" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Hotel Exemplo</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

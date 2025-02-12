@@ -1,0 +1,197 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+header {
+    background: #007BFF;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+section {
+    padding: 20px;
+    margin: 10px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+#quartos {
+    width: 100%;
+}
+
+.carousel {
+    position: relative;
+    overflow: hidden;
+    width: 90%; /* Ocupa 90% da largura da tela */
+    max-width: 1200px; /* Define um limite máximo */
+    height: 50vh; /* 50% da altura da viewport */
+    margin: 0 auto; /* Centraliza o carrossel */
+}
+
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+    height: 100%; /* Ocupa toda a altura do carrossel */
+}
+
+.carousel-images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
+}
+
+#bntReservar {
+    align-self: center; /* Centraliza o botão */
+    margin-top: 10px; /* Espaçamento acima do botão */
+    padding: 10px 20px; /* Aumenta o tamanho do botão */
+    font-size: 18px; /* Aumenta o tamanho da fonte do botão */
+    background-color: #007BFF; /* Cor de fundo do botão */
+    color: white; /* Cor do texto do botão */
+    border: none; /* Remove a borda padrão */
+    border-radius: 5px; /* Cantos arredondados do botão */
+    cursor: pointer; /* Muda o cursor ao passar sobre o botão */
+}
+
+.prev, .next {
+    position: absolute; /* Posiciona os botões sobre o carrossel */
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%); /* Ajusta a posição do botão */
+    background-color: rgba(255, 255, 255, 0.7); /* Fundo semi-transparente */
+    border: none; /* Remove a borda padrão */
+    cursor: pointer; /* Muda o cursor ao passar sobre o botão */
+    padding: 10px; /* Espaçamento interno do botão */
+    z-index: 1; /* Garante que os botões fiquem acima das imagens */
+}
+
+.prev {
+    left: 10px; /* Posiciona o botão à esquerda */
+}
+
+.next {
+    right: 10px; /* Posiciona o botão à direita */
+}
+
+
+.room {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    display: inline-block;
+    text-align: left;
+    width: 100%;
+}
+
+.room-list {
+    list-style: none; /* Remove a lista numerada */
+    padding: 0; /* Remove o espaçamento interno */
+    margin: 0; /* Remove a margem */
+    width: 100%;
+}
+
+.room-item {
+    margin-bottom: 20px; /* Espaçamento entre os itens da lista */
+    width: 100%;
+}
+
+.room-images {
+    display: flex; /* Usar flexbox para layout das imagens */
+    gap: 10px; /* Espaçamento entre as imagens */
+    margin-bottom: 10px; /* Espaçamento abaixo das imagens */
+}
+
+.room-images img {
+    width: 100px; /* Largura fixa da imagem */
+    height: 75px; /* Altura fixa da imagem */
+    object-fit: cover; /* Faz a imagem se adaptar ao tamanho */
+    border-radius: 5px; /* Cantos arredondados da imagem */
+}
+
+.room-item h3 {
+    margin-top: 10px; /* Espaçamento acima do título */
+    font-size: 18px; /* Aumenta o tamanho da fonte do título */
+}
+
+.room-item p {
+    font-size: 16px; /* Aumenta o tamanho da fonte da descrição */
+    color: #666; /* Cor da descrição */
+}
+
+#reservas {
+    border: 2px solid #007BFF; /* Borda azul */
+    border-radius: 10px; /* Cantos arredondados */
+    padding: 20px; /* Espaçamento interno */
+    margin: 20px auto; /* Margem superior/inferior e centraliza horizontalmente */
+    max-width: 600px; /* Largura máxima do quadrado */
+    background-color: #f9f9f9; /* Cor de fundo clara */
+}
+
+.reservation-container {
+    width: 100%; /* Largura total da div */
+    padding: 10px; /* Espaçamento interno */
+}
+
+#reservationForm {
+    display: flex; /* Usar flexbox para layout */
+    flex-direction: column; /* Colocar os elementos em coluna */
+    width: 100%; /* Largura total do formulário */
+}
+
+.form-group {
+    display: flex; /* Usar flexbox para os campos de entrada */
+    align-items: center; /* Alinha os itens verticalmente */
+    margin-bottom: 10px; /* Espaçamento entre os grupos de campos */
+}
+
+label {
+    width: 150px; /* Largura fixa para os rótulos */
+    margin-right: 10px; /* Espaçamento entre o label e o campo */
+    font-size: 16px; /* Aumenta o tamanho da fonte do label */
+}
+
+input[type="date"] {
+    padding: 10px; /* Espaçamento interno do campo */
+    font-size: 16px; /* Aumenta o tamanho da fonte do campo */
+    border: 1px solid #ccc; /* Borda do campo */
+    border-radius: 5px; /* Cantos arredondados do campo */
+    flex: 1; /* Faz o campo de entrada ocupar o espaço restante */
+}
+
+button:hover {
+    background-color: #0056b3; /* Cor do botão ao passar o mouse */
+}
+
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background: #007BFF;
+    color: #fff;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    nav {
+        display: flex;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Admin - Hotel Exemplo</title>
+</head>
+<body>
+    <header>
+        <h1>Painel Administrativo</h1>
+        <nav>
+            <a href="#gerenciar-fotos">Gerenciar Fotos</a>
+            <a href="#gerenciar-servicos">Gerenciar Serviços</a>
+            <a href="#visualizar-reservas">Visualizar Reservas</a>
+        </nav>
+    </header>
+
+    <section id="gerenciar-fotos">
+        <h2>Gerenciar Fotos</h2>
+        <input type="text" id="photoUrl" placeholder="URL da foto">
+        <button id="addPhoto">Adicionar
+        <div id="photoGallery"></div>
+    </section>
+
+    <section id="gerenciar-servicos">
+        <h2>Gerenciar Serviços</h2>
+        <input type="text" id="serviceName" placeholder="Nome do Serviço">
+        <button id="addService">Adicionar Serviço</button>
+        <ul id="serviceList"></ul>
+    </section>
+
+    <section id="visualizar-reservas">
+        <h2>Visualizar Reservas</h2>
+        <div id="reservasList"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Hotel Exemplo</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
