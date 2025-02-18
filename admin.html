@@ -3,61 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <title>Admin - Hotel Exemplo</title>
+    <title>Admin - Hotel NullPointer</title>
 </head>
-<body>
-    <header>
-        <h1>Painel Administrativo</h1>
-        <nav>
-            <a href="#gerenciar-quartos">Gerenciar Quartos</a>
-            <a href="#visualizar-reservas">Visualizar Reservas</a>
-            <a href="../">Voltar para site</a>
-        </nav>
-    </header>
-    
-    <section id="gerenciar-quartos">
-        <h2>Gerenciar Quartos</h2>
-        <div id="roomContainer" class="admin-form">
-            <div class="form-group">
-                <label for="roomName">Nome do Quarto</label>
-                <input type="text" id="roomName" placeholder="Ex: Quarto Standard">
-            </div>
-            
-            <div class="form-group">
-                <label for="roomPrice">Preço da Diária (R$)</label>
-                <input type="number" id="roomPrice" placeholder="Ex: 150">
-            </div>
-            
-            <div class="form-group">
-                <label for="roomDescription">Descrição do Quarto</label>
-                <textarea id="roomDescription" placeholder="Descreva as características do quarto"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="roomPhotoUrl">URL da Foto</label>
-                <input type="text" id="roomPhotoUrl" placeholder="Ex: https://exemplo.com/foto.jpg">
-                <button id="addRoomPhoto" class="bntEstilo">Adicionar Foto</button>
-                <div id="roomPhotoGallery" class="photo-gallery"></div>
-            </div>
-            
-            <div class="button-group">
-                <button id="addRoom" class="bntEstilo">Adicionar Quarto</button>
+<body class="bg-light">
+    <script>
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'login.html'; // Redirect to login page
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            window.location.href = 'login.html'; // Redirect to login page
+        }
+    </script>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background: linear-gradient(to right, #ff6600, #800080);">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hotel me-2"></i>
+                Hotel Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#gerenciar-quartos">
+                            <i class="fas fa-bed me-1"></i>
+                            Quartos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#visualizar-reservas">
+                            <i class="fas fa-calendar-check me-1"></i>
+                            Reservas
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i>
+                            Configurações
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-2"></i>Sair</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="../" target="_blank">
+                        <i class="fas fa-external-link-alt me-1"></i>
+                        Ver Site
+                    </a>
+                </div>
             </div>
         </div>
-        
-        <div id="roomListAdmin" class="room-list-admin"></div>
-    </section>
+    </nav>
 
-    <section id="visualizar-reservas">
-        <h2>Visualizar Reservas</h2>
-        <div id="reservasList"></div>
-    </section>
+    <div class="container py-4">
+        <section id="gerenciar-quartos" class="mb-5">
+            <h2 class="text-center mb-4">Gerenciar Quartos</h2>
+                    <form id="roomContainer" class="admin-form">
+                        <div class="mb-3">
+                            <label for="roomName" class="form-label">Nome do Quarto</label>
+                            <input type="text" class="form-control" id="roomName" placeholder="Ex: Quarto Standard">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="roomPrice" class="form-label">Preço da Diária (R$)</label>
+                            <input type="number" class="form-control" id="roomPrice" placeholder="Ex: 150">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="roomDescription" class="form-label">Descrição do Quarto</label>
+                            <textarea class="form-control" id="roomDescription" rows="3" placeholder="Descreva as características do quarto"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="roomPhotoUrl" class="form-label">Adicionar Nova Foto</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="roomPhotoUrl" placeholder="Ex: https://exemplo.com/foto.jpg">
+                                <button id="addRoomPhoto" class="btn btn-primary">Adicionar Foto</button>
+                            </div>
+                        </div>
 
-    <footer>
-        <p>&copy; 2023 Hotel Exemplo</p>
+                        <div class="mb-3">
+                            <label class="form-label">Fotos do Quarto</label>
+                            <div id="roomPhotoGallery" class="photo-gallery border rounded p-3"></div>
+                        </div>
+
+                        <button id="addRoom" class="btn btn-primary w-100">Adicionar Quarto</button>
+                    </form>
+            
+            
+            
+            <div id="roomListAdmin" class="row g-4 mt-4"></div>
+        </section>
+
+        <section id="visualizar-reservas">
+            <div id="reservasList" class="container shadow-sm">
+                <div class="card-body"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="editRoomModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Quarto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="admin-form">
+                        <div class="mb-3">
+                            <label for="editRoomName" class="form-label">Nome do Quarto</label>
+                            <input type="text" class="form-control" id="editRoomName">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editRoomPrice" class="form-label">Preço da Diária (R$)</label>
+                            <input type="number" class="form-control" id="editRoomPrice">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editRoomDescription" class="form-label">Descrição do Quarto</label>
+                            <textarea class="form-control" id="editRoomDescription" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editRoomPhotoUrl" class="form-label">Adicionar Nova Foto</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="editRoomPhotoUrl">
+                                <button id="editAddRoomPhoto" class="btn btn-primary">Adicionar Foto</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Fotos do Quarto</label>
+                            <div id="editRoomPhotoGallery" class="photo-gallery border rounded p-3"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="updateRoom">Atualizar Quarto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center text-white py-3 mt-5" style="background: linear-gradient(to right, #ff6600, #800080);">
+        <p class="mb-0">&copy; 2025 Hotel NullPointer</p>
     </footer>
 
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
