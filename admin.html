@@ -10,33 +10,44 @@
     <header>
         <h1>Painel Administrativo</h1>
         <nav>
-            <a href="#gerenciar-fotos">Gerenciar Fotos</a>
-            <a href="#gerenciar-servicos">Gerenciar Serviços</a>
+            <a href="#gerenciar-quartos">Gerenciar Quartos</a>
             <a href="#visualizar-reservas">Visualizar Reservas</a>
+            <a href="../">Voltar para site</a>
         </nav>
     </header>
-
-    <section id="gerenciar-fotos">
-        <h2>Gerenciar Fotos</h2>
-        <div id="serviceContainer">
-            <input type="text" id="photoUrl" placeholder="URL da foto">
-            <button id="addPhoto" class="bntEstilo">Adicionar Foto</button>
+    
+    <section id="gerenciar-quartos">
+        <h2>Gerenciar Quartos</h2>
+        <div id="roomContainer" class="admin-form">
+            <div class="form-group">
+                <label for="roomName">Nome do Quarto</label>
+                <input type="text" id="roomName" placeholder="Ex: Quarto Standard">
+            </div>
+            
+            <div class="form-group">
+                <label for="roomPrice">Preço da Diária (R$)</label>
+                <input type="number" id="roomPrice" placeholder="Ex: 150">
+            </div>
+            
+            <div class="form-group">
+                <label for="roomDescription">Descrição do Quarto</label>
+                <textarea id="roomDescription" placeholder="Descreva as características do quarto"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="roomPhotoUrl">URL da Foto</label>
+                <input type="text" id="roomPhotoUrl" placeholder="Ex: https://exemplo.com/foto.jpg">
+                <button id="addRoomPhoto" class="bntEstilo">Adicionar Foto</button>
+                <div id="roomPhotoGallery" class="photo-gallery"></div>
+            </div>
+            
+            <div class="button-group">
+                <button id="addRoom" class="bntEstilo">Adicionar Quarto</button>
+            </div>
         </div>
-        <div id="photoGallery">
-        </div>
+        
+        <div id="roomListAdmin" class="room-list-admin"></div>
     </section>
-    
-    <section id="gerenciar-servicos">
-        <h2>Gerenciar Serviços</h2>
-        <div id="serviceContainer">
-            <input type="text" id="serviceName" placeholder="Nome do Serviço">
-            <button id="addService" class="bntEstilo">Adicionar Serviço</button>
-        </div>
-        <ul id="serviceList">
-        </ul>
-    </section>
-    
-    
 
     <section id="visualizar-reservas">
         <h2>Visualizar Reservas</h2>
