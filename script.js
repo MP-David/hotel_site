@@ -1,13 +1,86 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // IndexedDB setup
     let db;
     const request = indexedDB.open("HotelDB", 1);
 
     request.onupgradeneeded = function(event) {
         db = event.target.result;
+        
+        // Check if stores exist before creating them
         if (!db.objectStoreNames.contains("rooms")) {
             const roomStore = db.createObjectStore("rooms", { keyPath: "id", autoIncrement: true });
             roomStore.createIndex("name", "name", { unique: false });
+            
+            // Create default rooms
+            const defaultRooms = [
+                {
+                    name: "Gênova - Itália",
+                    price: 2950, // ~R$680 (visto) + custo mensal médio convertido 
+                    description: "Quarto náutico com elementos em madeira envelhecida e vista simulada para o porto histórico. Gênova lidera rankings por sua internet ultrarrápida (248 Mbps) e política de visto de 12 meses. Inclui estação de trabalho integrada à cabeceira multifuncional.",
+                    photos: [
+                        "https://images.pexels.com/photos/7245535/pexels-photo-7245535.jpeg", // Porto histórico
+                        "https://images.pexels.com/photos/3757144/pexels-photo-3757144.jpeg", // Arquitetura medieval
+                        "https://images.pexels.com/photos/1579253/pexels-photo-1579253.jpeg"  // Detalhes em madeira
+                    ]
+                },
+                {
+                    name: "Valência - Espanha",
+                    price: 2650,
+                    description: "Ambiente futurista com revestimentos 3D nas paredes, refletindo a Ciudad de las Artes y las Ciencias. Oferece balcão ergonômico e acesso a comunidade nômade. Destaque para o custo-benefício: 45% mais barato que Barcelona.",
+                    photos: [
+                        "https://images.pexels.com/photos/2386310/pexels-photo-2386310.jpeg", // Arquitetura moderna
+                        "https://images.pexels.com/photos/4356144/pexels-photo-4356144.jpeg"  // Vista urbana
+                    ]
+                },
+                {
+                    name: "Lisboa - Portugal",
+                    price: 3400,
+                    description: "Decoração em estilo 'Japandi' com azulejos portugueses e varanda panorâmica. Lisboa atrai por 300 dias de sol/ano e ecossistema de startups. Inclui iluminação inteligente controlada por voz.",
+                    photos: [
+                        "https://images.pexels.com/photos/3379049/pexels-photo-3379049.jpeg",
+                        "https://images.pexels.com/photos/3747236/pexels-photo-3747236.jpeg",
+                        "https://images.pexels.com/photos/3131971/pexels-photo-3131971.jpeg", // Vista do Tejo
+                        "https://images.pexels.com/photos/1388030/pexels-photo-1388030.jpeg"  // Varanda urbana
+                    ]
+                },
+                {
+                    name: "Medellín - Colômbia",
+                    price: 1850,
+                    description: "Jardim vertical integrado e móveis multifuncionais. Reflete a 'Cidade da Eterna Primavera' com clima perfeito e custo 35% menor que EUA. Inclui mesa de trabalho com iluminação natural otimizada.",
+                    photos: [
+                        "https://images.pexels.com/photos/5128783/pexels-photo-5128783.jpeg", // Arquitetura moderna
+                    ]
+                },
+                {
+                    name: "Chiang Mai - Tailândia",
+                    price: 1620,
+                    description: "Minimalismo budista com espaços zen e proteção antimosquitos. Representa o hub asiático com cafés 24h e custo mensal médio de R$2,8k. Inclui nichos de meditação com revestimento em bambu.",
+                    photos: [
+                        "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg", // Templo
+                        "https://images.pexels.com/photos/3935702/pexels-photo-3935702.jpeg",  // Ambiente zen
+                        "https://images.pexels.com/photos/1591373/pexels-photo-1591373.jpeg"   // Mercado noturno
+                    ]
+                },
+                {
+                    name: "Canggu - Bali",
+                    price: 4550,
+                    description: "Suíte boutique com piscina privativa e deck externo. Combina surf, vida saudável e coworking tropical. Preço inclui acesso premium a eventos da comunidade global.",
+                    photos: [
+                        "https://images.pexels.com/photos/2373201/pexels-photo-2373201.jpeg", // Praia
+                        "https://images.pexels.com/photos/2583852/pexels-photo-2583852.jpeg",  // Piscina
+                        "https://images.pexels.com/photos/1450360/pexels-photo-1450360.jpeg",  // Cafés
+                        "https://images.pexels.com/photos/1457842/pexels-photo-1457842.jpeg"   // Vida noturna
+                    ]
+                }
+            ];
+
+
+
+              defaultRooms.forEach(room => {
+                roomStore.add(room);
+            });
         }
+
         if (!db.objectStoreNames.contains("reservations")) {
             const reservationStore = db.createObjectStore("reservations", { keyPath: "id", autoIncrement: true });
             reservationStore.createIndex("clientName", "clientName", { unique: false });
@@ -15,211 +88,42 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
+    // Add a function to check database status
+    function checkDatabase() {
+        const transaction = db.transaction(["rooms", "reservations"], "readonly");
+        
+        // Check rooms store
+        const roomStore = transaction.objectStore("rooms");
+        const roomRequest = roomStore.count();
+        roomRequest.onsuccess = function() {
+            console.log(`Number of rooms in database: ${roomRequest.result}`);
+        };
+        
+        // Check reservations store
+        const reservationStore = transaction.objectStore("reservations");
+        const reservationRequest = reservationStore.count();
+        reservationRequest.onsuccess = function() {
+            console.log(`Number of reservations in database: ${reservationRequest.result}`);
+        };
+    }
+
     request.onsuccess = function(event) {
         db = event.target.result;
-        console.log("Database initialized successfully");
-        initializeApplication();
-    };
-
-    request.onerror = function(event) {
-        console.error("Database error:", event.target.error);
-    };
-
-    // Move all initialization into a single function
-    function initializeApplication() {
-        // Initialize services
-        initializeServices();
-        
-        // Load all data
+        console.log("Database version:", db.version);
+        console.log("Object stores:", Array.from(db.objectStoreNames));
+        checkDatabase();
         loadRooms();
         loadRoomsAdmin();
-        loadRoomSelect();
-        loadReservations();
-        
-        // Set up event listeners
-        setupEventListeners();
-    }
+        loadRoomSelect(); // Now db will be defined
+        loadReservations(); // Now db will be defined
+        initializeServices(); // Initialize services after db is defined
+    };
 
-    function setupEventListeners() {
-        const reservationForm = document.getElementById("reservationForm");
-        if (reservationForm) {
-            reservationForm.addEventListener("submit", handleReservation);
-        }
-
-        const addRoomButton = document.getElementById("addRoom");
-        if (addRoomButton) {
-            addRoomButton.onclick = handleAddRoom;
-        }
-
-        const addRoomPhotoButton = document.getElementById("addRoomPhoto");
-        if (addRoomPhotoButton) {
-            addRoomPhotoButton.onclick = handleAddRoomPhoto;
-        }
-
-        // Add navigation setup here
-        setupAdminNavigation();
-    }
-
-    function loadRoomSelect() {
-        if (!db) {
-            console.error("Database not initialized");
-            return;
-        }
-
-        try {
-            const transaction = db.transaction(["rooms"], "readonly");
-            const roomStore = transaction.objectStore("rooms");
-            const request = roomStore.getAll();
-
-            request.onsuccess = function(event) {
-                const rooms = event.target.result;
-                const roomSelect = document.getElementById("roomSelect");
-                if (roomSelect) {
-                    roomSelect.innerHTML = '<option value="">Selecione um quarto</option>';
-                    rooms.forEach(room => {
-                        roomSelect.innerHTML += `
-                            <option value="${room.id}">
-                                ${room.name} - R$${room.price} - ${room.description}
-                            </option>
-                        `;
-                    });
-                }
-            };
-
-            request.onerror = function(event) {
-                console.error("Error loading rooms:", event.target.error);
-            };
-        } catch (error) {
-            console.error("Error in loadRoomSelect:", error);
-        }
-    }
-
-    function loadReservations() {
-        if (!db) {
-            console.error("Database not initialized");
-            return;
-        }
-
-        try {
-            const transaction = db.transaction(["reservations", "rooms"], "readonly");
-            const reservationStore = transaction.objectStore("reservations");
-            const roomStore = transaction.objectStore("rooms");
-            const request = reservationStore.getAll();
-
-            request.onsuccess = function(event) {
-                const reservations = event.target.result;
-                const reservationsList = document.getElementById("reservasList");
-                if (reservationsList) {
-                    reservationsList.innerHTML = "<h3>Reservas Atuais</h3>";
-                    
-                    reservations.forEach(reservation => {
-                        const roomRequest = roomStore.get(reservation.roomId);
-                        roomRequest.onsuccess = function(event) {
-                            const room = event.target.result;
-                            const div = document.createElement("div");
-                            div.className = "reservation-item";
-                            div.innerHTML = `
-                                <p><strong>Cliente:</strong> ${reservation.clientName}</p>
-                                <p><strong>Quarto:</strong> ${room.name}</p>
-                                <p><strong>Check-in:</strong> ${new Date(reservation.checkin).toLocaleDateString()}</p>
-                                <p><strong>Check-out:</strong> ${new Date(reservation.checkout).toLocaleDateString()}</p>
-                                <button class="bntEstilo" onclick="deleteReservation(${reservation.id})">Cancelar Reserva</button>
-                            `;
-                            reservationsList.appendChild(div);
-                        };
-                    });
-                }
-            };
-        } catch (error) {
-            console.error("Error in loadReservations:", error);
-        }
-    }
-
-    // Define the room addition function
-    function handleAddRoom(event) {
-        event.preventDefault(); // Prevent default form submission behavior
-
-        const roomName = document.getElementById("roomName").value;
-        const roomPrice = document.getElementById("roomPrice").value;
-        const roomDescription = document.getElementById("roomDescription").value;
-        // Collect photo URLs from each input added in the photo gallery
-        const roomPhotos = Array.from(document.querySelectorAll("#roomPhotoGallery .photo-url"))
-                              .map(input => input.value);
-
-        if (!roomName || !roomPrice || !roomDescription) {
-            alert("Por favor, preencha todos os campos.");
-            return;
-        }
-
-        const transaction = db.transaction(["rooms"], "readwrite");
-        const roomStore = transaction.objectStore("rooms");
-
-        const room = {
-            name: roomName,
-            price: parseFloat(roomPrice),
-            description: roomDescription,
-            photos: roomPhotos
-        };
-
-        roomStore.add(room);
-
-        transaction.oncomplete = function() {
-            console.log("Room added successfully");
-            loadRooms();
-            loadRoomsAdmin();
-            // Clear form fields
-            document.getElementById("roomContainer").reset();
-            document.getElementById("roomPhotoGallery").innerHTML = "";
-        };
-
-        transaction.onerror = function(event) {
-            console.error("Transaction error:" + event.target.errorCode);
-        };
-    }
-
-    // Define the Add Room Photo function
-    function handleAddRoomPhoto(event) {
-        event.preventDefault(); // Prevent form submission when clicking the button
-
-        const photoUrl = document.getElementById("roomPhotoUrl").value;
-        const gallery = document.getElementById("roomPhotoGallery");
-
-        if (photoUrl) {
-            const container = document.createElement("div");
-            container.className = "photo-container";
-
-            // Create an image preview element
-            const img = document.createElement("img");
-            img.src = photoUrl;
-            img.alt = "Preview do quarto";
-            img.style.width = "150px";
-            img.style.height = "100px";
-            img.style.objectFit = "cover";
-
-            // Create an input to hold the URL text so it can be edited later
-            const urlText = document.createElement("input");
-            urlText.type = "text";
-            urlText.value = photoUrl;
-            urlText.className = "photo-url form-control";
-
-            // Create remove button
-            const removeButton = document.createElement("button");
-            removeButton.textContent = "Remover";
-            removeButton.className = "btn btn-danger";
-            removeButton.onclick = function() {
-                container.remove();
-            };
-
-            // Append elements
-            container.appendChild(img);
-            container.appendChild(urlText);
-            container.appendChild(removeButton);
-            gallery.appendChild(container);
-
-            // Clean the photo URL input
-            document.getElementById("roomPhotoUrl").value = "";
-        }
-    }
+    // Add better error handling
+    request.onerror = function(event) {
+        console.error("Database error:", event.target.error);
+        console.error("Error code:", event.target.errorCode);
+    };
 
     // Add room
     const addRoomButton = document.getElementById("addRoom");
@@ -255,53 +159,52 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Add room photo
-    function handleAddRoomPhoto() {
-        const photoUrl = document.getElementById("roomPhotoUrl").value;
-        const gallery = document.getElementById("roomPhotoGallery");
-
-        if (photoUrl) {
-            const container = document.createElement("div");
-            container.className = "photo-container";
-
-            // Preview da imagem
-            const img = document.createElement("img");
-            img.src = photoUrl;
-            img.alt = "Preview do quarto";
-            img.style.width = "150px";
-            img.style.height = "100px";
-            img.style.objectFit = "cover";
-
-            // URL da imagem
-            const urlText = document.createElement("input");
-            urlText.type = "text";
-            urlText.value = photoUrl;
-            urlText.className = "photo-url";
-
-            // Botão remover
-            const removeButton = document.createElement("button");
-            removeButton.textContent = "Remover";
-            removeButton.className = "bntEstilo";
-            removeButton.onclick = function() {
-                container.remove();
-            };
-
-            container.appendChild(img);
-            container.appendChild(urlText);
-            container.appendChild(removeButton);
-            gallery.appendChild(container);
-
-            // Limpa o campo de input
-            document.getElementById("roomPhotoUrl").value = "";
-        }
+    const addRoomPhotoButton = document.getElementById("addRoomPhoto");
+    if (addRoomPhotoButton) {
+        addRoomPhotoButton.addEventListener("click", function() {
+            const photoUrl = document.getElementById("roomPhotoUrl").value;
+            const gallery = document.getElementById("roomPhotoGallery");
+    
+            if (photoUrl) {
+                const container = document.createElement("div");
+                container.className = "photo-container";
+    
+                // Preview da imagem
+                const img = document.createElement("img");
+                img.src = photoUrl;
+                img.alt = "Preview do quarto";
+                img.style.width = "150px";
+                img.style.height = "100px";
+                img.style.objectFit = "cover";
+    
+                // URL da imagem
+                const urlText = document.createElement("input");
+                urlText.type = "text";
+                urlText.value = photoUrl;
+                urlText.readOnly = true;
+                urlText.className = "photo-url";
+    
+                // Botão remover
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remover";
+                removeButton.className = "bntEstilo";
+                removeButton.onclick = function() {
+                    container.remove();
+                };
+    
+                container.appendChild(img);
+                container.appendChild(urlText);
+                container.appendChild(removeButton);
+                gallery.appendChild(container);
+    
+                // Limpa o campo de input
+                document.getElementById("roomPhotoUrl").value = "";
+            }
+        });
     }
 
-    // Update the loadRooms function
+    // Load rooms
     function loadRooms() {
-        if (!db) {
-            console.error("Database not initialized");
-            return;
-        }
-
         const transaction = db.transaction(["rooms"], "readonly");
         const roomStore = transaction.objectStore("rooms");
         const request = roomStore.getAll();
@@ -309,10 +212,9 @@ document.addEventListener("DOMContentLoaded", function() {
         request.onsuccess = function(event) {
             const rooms = event.target.result;
             const roomList = document.getElementById("roomList");
-            
             if (roomList) {
                 roomList.innerHTML = "";
-                
+
                 rooms.forEach(room => {
                     const col = document.createElement("div");
                     col.className = "col-12 col-md-6 col-lg-4";
@@ -369,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function() {
         };
 
         request.onerror = function(event) {
-            console.error("Error loading rooms:", event.target.error);
+            console.error("Request error: " + event.target.errorCode);
         };
     }
 
@@ -413,6 +315,7 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
+    // Edit room
     window.editRoom = function(roomId) {
         // Get the modal element
         const modalElement = document.getElementById('editRoomModal');
@@ -477,102 +380,29 @@ document.addEventListener("DOMContentLoaded", function() {
                 gallery.appendChild(container);
             });
 
-            // Add photo button functionality
-            const editAddPhotoButton = document.getElementById("editAddRoomPhoto");
-            editAddPhotoButton.onclick = function() {
-                const photoUrl = document.getElementById("editRoomPhotoUrl").value;
-                if (photoUrl) {
-                    addPhotoToGallery(photoUrl, "editRoomPhotoGallery");
-                    document.getElementById("editRoomPhotoUrl").value = "";
-                }
-            };
-
-            // Update button functionality
-            const updateButton = document.getElementById("updateRoom");
-            updateButton.onclick = function() {
+            // Change addRoom button to update mode
+            const updateRoomButton = document.getElementById("updateRoom");
+            updateRoomButton.onclick = function() {
                 const updatedRoom = {
                     id: roomId,
                     name: document.getElementById("editRoomName").value,
-                    price: parseFloat(document.getElementById("editRoomPrice").value),
+                    price: document.getElementById("editRoomPrice").value,
                     description: document.getElementById("editRoomDescription").value,
-                    photos: Array.from(document.querySelectorAll("#editRoomPhotoGallery .photo-url"))
-                        .map(input => input.value)
+                    photos: Array.from(document.querySelectorAll("#editRoomPhotoGallery .photo-url")).map(input => input.value)
                 };
-
-                const updateTransaction = db.transaction(["rooms"], "readwrite");
-                const updateStore = updateTransaction.objectStore("rooms");
-                
-                const updateRequest = updateStore.put(updatedRoom);
-
-                updateRequest.onsuccess = function() {
-                    console.log("Room updated successfully");
-                    modal.hide();
-                    // Clean up modal backdrop
-                    const backdrop = document.querySelector('.modal-backdrop');
-                    if (backdrop) {
-                        backdrop.remove();
-                    }
-                    document.body.classList.remove('modal-open');
-                    loadRooms();
-                    loadRoomsAdmin();
-                };
-
-                updateRequest.onerror = function(event) {
-                    console.error("Error updating room:", event.target.error);
-                };
+                updateRoom(updatedRoom, modal);
             };
+        };
+
+        request.onerror = function(event) {
+            console.error("Request error: " + event.target.errorCode);
         };
     };
 
-    // Helper function to add photos to gallery
-    function addPhotoToGallery(photoUrl, galleryId) {
-        const gallery = document.getElementById(galleryId);
-        const container = document.createElement("div");
-        container.className = "photo-container";
-
-        const img = document.createElement("img");
-        img.src = photoUrl;
-        img.alt = "Preview do quarto";
-        img.style.width = "150px";
-        img.style.height = "100px";
-        img.style.objectFit = "cover";
-
-        const urlText = document.createElement("input");
-        urlText.type = "text";
-        urlText.value = photoUrl;
-        urlText.className = "photo-url";
-
-        const removeButton = document.createElement("button");
-        removeButton.textContent = "Remover";
-        removeButton.className = "bntEstilo";
-        removeButton.onclick = function() {
-            container.remove();
-        };
-
-        container.appendChild(img);
-        container.appendChild(urlText);
-        container.appendChild(removeButton);
-        gallery.appendChild(container);
-    }
-
     // Update room
-    function updateRoom(roomId) {
-        const roomName = document.getElementById("roomName").value;
-        const roomPrice = document.getElementById("roomPrice").value;
-        const roomDescription = document.getElementById("roomDescription").value;
-        // Get URLs from the editable inputs instead of img sources
-        const roomPhotos = Array.from(document.querySelectorAll("#roomPhotoGallery .photo-url")).map(input => input.value);
-
+    function updateRoom(room, modal) {
         const transaction = db.transaction(["rooms"], "readwrite");
         const roomStore = transaction.objectStore("rooms");
-
-        const room = {
-            id: roomId,
-            name: roomName,
-            price: roomPrice,
-            description: roomDescription,
-            photos: roomPhotos
-        };
 
         roomStore.put(room);
 
@@ -581,10 +411,12 @@ document.addEventListener("DOMContentLoaded", function() {
             loadRooms();
             loadRoomsAdmin();
             // Reset form
-            document.getElementById("roomName").value = "";
-            document.getElementById("roomPrice").value = "";
-            document.getElementById("roomDescription").value = "";
-            document.getElementById("roomPhotoGallery").innerHTML = "";
+            document.getElementById("editRoomName").value = "";
+            document.getElementById("editRoomPrice").value = "";
+            document.getElementById("editRoomDescription").value = "";
+            document.getElementById("editRoomPhotoGallery").innerHTML = "";
+            // Hide the modal
+            modal.hide();
         };
 
         transaction.onerror = function(event) {
@@ -625,7 +457,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         const slideWidth = slides[0].clientWidth;
-        carouselImages.style.transform = `translateX(-${currentSlideIndex * slideWidth}px)`;
+        carouselImages.style.transform = `translateX(-${(currentSlideIndex * 100) / totalSlides}%)`;
         carouselImages.setAttribute('data-index', currentSlideIndex);
     }
 
@@ -642,6 +474,41 @@ document.addEventListener("DOMContentLoaded", function() {
             moveSlide(1, carouselImages);
         });
     });
+
+    // Move loadRoomSelect inside DOMContentLoaded and after db is defined
+    function loadRoomSelect() {
+        if (!db) {
+            console.error("Database not initialized");
+            return;
+        }
+
+        try {
+            const transaction = db.transaction(["rooms"], "readonly");
+            const roomStore = transaction.objectStore("rooms");
+            const request = roomStore.getAll();
+
+            request.onsuccess = function(event) {
+                const rooms = event.target.result;
+                const roomSelect = document.getElementById("roomSelect");
+                if (roomSelect) {
+                    roomSelect.innerHTML = '<option value="">Selecione um quarto</option>';
+                    rooms.forEach(room => {
+                        roomSelect.innerHTML += `
+                            <option value="${room.id}">
+                                ${room.name} - R$${room.price} - ${room.description}
+                            </option>
+                        `;
+                    });
+                }
+            };
+
+            request.onerror = function(event) {
+                console.error("Error loading rooms:", event.target.error);
+            };
+        } catch (error) {
+            console.error("Error in loadRoomSelect:", error);
+        }
+    }
 
     // Add reservation handler
     function handleReservation(event) {
@@ -661,35 +528,59 @@ document.addEventListener("DOMContentLoaded", function() {
         const reservationStore = transaction.objectStore("reservations");
 
         const reservation = {
-            clientName: clientName,
-            roomId: roomId,
-            checkin: checkin,
-            checkout: checkout
+            clientName,
+            checkin,
+            checkout,
+            roomId: parseInt(roomId),
+            createdAt: new Date().toISOString()
         };
 
         reservationStore.add(reservation);
 
         transaction.oncomplete = function() {
-            console.log("Reservation added successfully");
-            showReservationMessage("Reserva realizada com sucesso!", "success");
-            loadReservations();
+            document.getElementById("reservationMessage").innerHTML = 
+                '<p style="color: green;">Reserva realizada com sucesso!</p>';
             document.getElementById("reservationForm").reset();
+            loadReservations(); // Add this function to update admin view
         };
 
         transaction.onerror = function(event) {
-            console.error("Transaction error:", event.target.errorCode);
-            showReservationMessage("Erro ao realizar a reserva. Tente novamente.", "danger");
+            document.getElementById("reservationMessage").innerHTML = 
+                '<p style="color: red;">Erro ao fazer reserva. Tente novamente.</p>';
         };
     }
 
-    function showReservationMessage(message, type) {
-        const reservationMessage = document.getElementById("reservationMessage");
-        reservationMessage.innerHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        `;
+    // Add this to load reservations in admin panel
+    function loadReservations() {
+        const transaction = db.transaction(["reservations", "rooms"], "readonly");
+        const reservationStore = transaction.objectStore("reservations");
+        const roomStore = transaction.objectStore("rooms");
+        const request = reservationStore.getAll();
+
+        request.onsuccess = function(event) {
+            const reservations = event.target.result;
+            const reservationsList = document.getElementById("reservasList");
+            if (reservationsList) {
+                reservationsList.innerHTML = "<h3>Reservas Atuais</h3>";
+                
+                reservations.forEach(reservation => {
+                    const roomRequest = roomStore.get(reservation.roomId);
+                    roomRequest.onsuccess = function(event) {
+                        const room = event.target.result;
+                        const div = document.createElement("div");
+                        div.className = "reservation-item";
+                        div.innerHTML = `
+                            <p><strong>Cliente:</strong> ${reservation.clientName}</p>
+                            <p><strong>Quarto:</strong> ${room.name}</p>
+                            <p><strong>Check-in:</strong> ${new Date(reservation.checkin).toLocaleDateString()}</p>
+                            <p><strong>Check-out:</strong> ${new Date(reservation.checkout).toLocaleDateString()}</p>
+                            <button class="bntEstilo" onclick="deleteReservation(${reservation.id})">Cancelar Reserva</button>
+                        `;
+                        reservationsList.appendChild(div);
+                    };
+                });
+            }
+        };
     }
 
     // Add delete reservation function
@@ -703,20 +594,30 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     };
 
-    // Add this inside your DOMContentLoaded event listener
+    // Load rooms into select when page loads
+    loadRoomSelect();
+
+    // Add reservation form handler
+    const reservationForm = document.getElementById("reservationForm");
+    if (reservationForm) {
+        reservationForm.addEventListener("submit", handleReservation);
+    }
+
+    // Load reservations in admin panel
+    loadReservations();
+
+    // Initialize services section
     function initializeServices() {
         const servicesList = document.querySelector('.services-list');
         const servicePreview = document.getElementById('servicePreview');
 
         if (servicesList && servicePreview) {
-            // Show first service image by default
             const firstService = servicesList.querySelector('li');
             if (firstService) {
                 servicePreview.src = firstService.dataset.image;
                 servicePreview.style.display = 'block';
             }
 
-            // Add click handlers to all service items
             servicesList.querySelectorAll('li').forEach(item => {
                 item.addEventListener('click', function() {
                     servicePreview.style.opacity = '0';
@@ -728,7 +629,4 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
-
-    // Call the function after your existing initialization code
-    initializeServices();
 });
