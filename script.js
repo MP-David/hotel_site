@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Botão remover
                 const removeButton = document.createElement("button");
                 removeButton.textContent = "Remover";
-                removeButton.className = "bntEstilo";
+                removeButton.className = "btnEditRoom";
                 removeButton.onclick = function() {
                     container.remove();
                 };
@@ -299,11 +299,11 @@ document.addEventListener("DOMContentLoaded", function() {
                             <div class="carousel-images" data-index="0">
                                 ${room.photos.map(photo => `<img src="${photo}" alt="${room.name}" style="width: 100px; margin: 5px;">`).join('')}
                             </div>
-                            <button class="prev" onclick="moveSlide(-1, this.closest('.carousel').querySelector('.carousel-images'))">&#10094;</button>
-                            <button class="next" onclick="moveSlide(1, this.closest('.carousel').querySelector('.carousel-images'))">&#10095;</button>
+                            <button class="btn btn-secondary prev" onclick="moveSlide(-1, this.closest('.carousel').querySelector('.carousel-images'))">&#10094;</button>
+                            <button class="btn btn-secondary next" onclick="moveSlide(1, this.closest('.carousel').querySelector('.carousel-images'))">&#10095;</button>
                         </div>
-                        <button class="bntEstilo" onclick="editRoom(${room.id})">Editar</button>
-                        <button class="bntEstilo" onclick="deleteRoom(${room.id})">Excluir</button>
+                        <button class="btn btn-primary btnEditRoom" onclick="editRoom(${room.id})">Editar</button>
+                        <button class="btn btn-danger btnEditRoom" onclick="deleteRoom(${room.id})">Excluir</button>
                     `;
                     roomListAdmin.appendChild(div);
                 });
@@ -369,7 +369,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const removeButton = document.createElement("button");
                 removeButton.textContent = "Remover";
-                removeButton.className = "bntEstilo";
+                removeButton.className = "btn btn-danger";
                 removeButton.onclick = function() {
                     container.remove();
                 };
@@ -379,6 +379,44 @@ document.addEventListener("DOMContentLoaded", function() {
                 container.appendChild(removeButton);
                 gallery.appendChild(container);
             });
+
+            // Add event listener to the add photo button
+            const addRoomPhotoButton = document.getElementById("editAddRoomPhoto");
+            addRoomPhotoButton.onclick = function(event) {
+                event.preventDefault(); // Prevent form submission
+                const photoUrl = document.getElementById("editRoomPhotoUrl").value;
+                if (photoUrl) {
+                    const container = document.createElement("div");
+                    container.className = "photo-container";
+
+                    const img = document.createElement("img");
+                    img.src = photoUrl;
+                    img.alt = "Preview do quarto";
+                    img.style.width = "150px";
+                    img.style.height = "100px";
+                    img.style.objectFit = "cover";
+
+                    const urlText = document.createElement("input");
+                    urlText.type = "text";
+                    urlText.value = photoUrl;
+                    urlText.className = "photo-url";
+
+                    const removeButton = document.createElement("button");
+                    removeButton.textContent = "Remover";
+                    removeButton.className = "btn btn-danger";
+                    removeButton.onclick = function() {
+                        container.remove();
+                    };
+
+                    container.appendChild(img);
+                    container.appendChild(urlText);
+                    container.appendChild(removeButton);
+                    gallery.appendChild(container);
+
+                    // Clear the input field
+                    document.getElementById("editRoomPhotoUrl").value = "";
+                }
+            };
 
             // Change addRoom button to update mode
             const updateRoomButton = document.getElementById("updateRoom");
@@ -513,20 +551,20 @@ document.addEventListener("DOMContentLoaded", function() {
     // Add reservation handler
     function handleReservation(event) {
         event.preventDefault();
-
+    
         const clientName = document.getElementById("clientName").value;
         const roomId = parseInt(document.getElementById("roomSelect").value);
         const checkin = document.getElementById("checkin").value;
         const checkout = document.getElementById("checkout").value;
-
+    
         if (!clientName || !roomId || !checkin || !checkout) {
             alert("Por favor, preencha todos os campos.");
             return;
         }
-
+    
         const transaction = db.transaction(["reservations"], "readwrite");
         const reservationStore = transaction.objectStore("reservations");
-
+    
         const reservation = {
             clientName,
             checkin,
@@ -534,19 +572,32 @@ document.addEventListener("DOMContentLoaded", function() {
             roomId: parseInt(roomId),
             createdAt: new Date().toISOString()
         };
-
+    
         reservationStore.add(reservation);
-
+    
         transaction.oncomplete = function() {
-            document.getElementById("reservationMessage").innerHTML = 
-                '<p style="color: green;">Reserva realizada com sucesso!</p>';
             document.getElementById("reservationForm").reset();
             loadReservations(); // Add this function to update admin view
+    
+            // Exibir toast de sucesso
+            const toastBody = document.getElementById("reservationToastBody");
+            toastBody.textContent = "Reserva realizada com sucesso!";
+            const toastElement = document.getElementById("reservationToast");
+            toastElement.classList.remove("bg-danger");
+            toastElement.classList.add("bg-success");
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
         };
-
+    
         transaction.onerror = function(event) {
-            document.getElementById("reservationMessage").innerHTML = 
-                '<p style="color: red;">Erro ao fazer reserva. Tente novamente.</p>';
+            // Exibir toast de erro
+            const toastBody = document.getElementById("reservationToastBody");
+            toastBody.textContent = "Erro ao fazer reserva. Tente novamente.";
+            const toastElement = document.getElementById("reservationToast");
+            toastElement.classList.remove("bg-success");
+            toastElement.classList.add("bg-danger");
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
         };
     }
 
@@ -556,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const reservationStore = transaction.objectStore("reservations");
         const roomStore = transaction.objectStore("rooms");
         const request = reservationStore.getAll();
-
+    
         request.onsuccess = function(event) {
             const reservations = event.target.result;
             const reservationsList = document.getElementById("reservasList");
@@ -572,9 +623,9 @@ document.addEventListener("DOMContentLoaded", function() {
                         div.innerHTML = `
                             <p><strong>Cliente:</strong> ${reservation.clientName}</p>
                             <p><strong>Quarto:</strong> ${room.name}</p>
-                            <p><strong>Check-in:</strong> ${new Date(reservation.checkin).toLocaleDateString()}</p>
-                            <p><strong>Check-out:</strong> ${new Date(reservation.checkout).toLocaleDateString()}</p>
-                            <button class="bntEstilo" onclick="deleteReservation(${reservation.id})">Cancelar Reserva</button>
+                            <p><strong>Check-in:</strong> ${formatDate(reservation.checkin)}</p>
+                            <p><strong>Check-out:</strong> ${formatDate(reservation.checkout)}</p>
+                            <button class="btnEditRoom" onclick="deleteReservation(${reservation.id})">Cancelar Reserva</button>
                         `;
                         reservationsList.appendChild(div);
                     };
@@ -629,4 +680,30 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
     }
+
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
+
+    // Recolher o menu quando uma opção é selecionada
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(function(navLink) {
+        navLink.addEventListener('click', function() {
+            if (navbarCollapse.classList.contains('show')) {
+                navbarToggler.click();
+            }
+        });
+    });
+
+    // Recolher o menu quando se clica fora do menu
+    document.addEventListener('click', function(event) {
+        const isClickInside = navbarCollapse.contains(event.target) || navbarToggler.contains(event.target);
+        if (!isClickInside && navbarCollapse.classList.contains('show')) {
+            navbarToggler.click();
+        }
+    });
 });
+
+// Função para formatar a data no formato dd/mm/yyyy
+function formatDate(dateString) {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
+}

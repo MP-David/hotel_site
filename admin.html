@@ -68,39 +68,37 @@
     <div class="container py-4">
         <section id="gerenciar-quartos" class="mb-5">
             <h2 class="text-center mb-4">Gerenciar Quartos</h2>
-                    <form id="roomContainer" class="admin-form">
-                        <div class="mb-3">
-                            <label for="roomName" class="form-label">Nome do Quarto</label>
-                            <input type="text" class="form-control" id="roomName" placeholder="Ex: Quarto Standard">
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="roomPrice" class="form-label">Preço da Diária (R$)</label>
-                            <input type="number" class="form-control" id="roomPrice" placeholder="Ex: 150">
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="roomDescription" class="form-label">Descrição do Quarto</label>
-                            <textarea class="form-control" id="roomDescription" rows="3" placeholder="Descreva as características do quarto"></textarea>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="roomPhotoUrl" class="form-label">Adicionar Nova Foto</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="roomPhotoUrl" placeholder="Ex: https://exemplo.com/foto.jpg">
-                                <button id="addRoomPhoto" class="btn btn-primary">Adicionar Foto</button>
-                            </div>
-                        </div>
+            <form id="roomContainer" class="admin-form">
+                <div class="mb-3">
+                    <label for="roomName" class="form-label">Nome do Quarto</label>
+                    <input type="text" class="form-control" id="roomName" placeholder="Ex: Quarto Standard">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="roomPrice" class="form-label">Preço da Diária (R$)</label>
+                    <input type="number" class="form-control" id="roomPrice" placeholder="Ex: 150">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="roomDescription" class="form-label">Descrição do Quarto</label>
+                    <textarea class="form-control" id="roomDescription" rows="3" placeholder="Descreva as características do quarto"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="roomPhotoUrl" class="form-label">Adicionar Nova Foto</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="roomPhotoUrl" placeholder="Ex: https://exemplo.com/foto.jpg">
+                        <button id="addRoomPhoto" class="btn btn-primary">Adicionar Foto</button>
+                    </div>
+                </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Fotos do Quarto</label>
-                            <div id="roomPhotoGallery" class="photo-gallery border rounded p-3"></div>
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label">Fotos do Quarto</label>
+                    <div id="roomPhotoGallery" class="photo-gallery border rounded p-3"></div>
+                </div>
 
-                        <button id="addRoom" class="btn btn-primary w-100">Adicionar Quarto</button>
-                    </form>
-            
-            
+                <button id="addRoom" class="btn btn-primary w-100">Adicionar Quarto</button>
+            </form>
             
             <div id="roomListAdmin" class="row g-4 mt-4"></div>
         </section>
